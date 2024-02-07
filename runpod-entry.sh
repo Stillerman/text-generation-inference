@@ -7,7 +7,7 @@ if [ -z "$MODEL_ID" ]; then
 fi
 
 apt-get update
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
 apt-get install unzip
 PROTOC_ZIP=protoc-21.12-linux-x86_64.zip
@@ -15,7 +15,8 @@ curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v21.12/$P
 unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
 unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
 rm -f $PROTOC_ZIP
-apt-get install libssl-dev gcc -y
-BUILD_EXTENSIONS=True make install
+apt-get install libssl-dev gcc pkg-config -y
+
+. "$HOME/.cargo/env" && BUILD_EXTENSIONS=True make install
 
 text-generation-launcher --model-id $MODEL_ID
